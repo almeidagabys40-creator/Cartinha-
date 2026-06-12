@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Andrey & Gabriela</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #fdf3f0;
+    --rose: #d96b78;
+    --rose-deep: #a8424f;
+    --cream: #fffaf6;
+    --ink: #3a2c2e;
+    --gold: #cda05f;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{
+    font-family:'Quicksand', sans-serif;
+    background: linear-gradient(180deg, #fdf3f0 0%, #f7e6e1 100%);
+    color: var(--ink);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 24px 0;
+    overflow-x:hidden;
+  }
+  .envelope-wrap{
+    width: 100%;
+    max-width: 420px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    perspective: 1200px;
+  }
+  .cover{
+    width: 100%;
+    max-width: 380px;
+    background: var(--cream);
+    border-radius: 18px;
+    box-shadow: 0 20px 50px rgba(168,66,79,0.18);
+    padding: 48px 28px;
+    text-align:center;
+    cursor:pointer;
+    transition: transform 0.6s ease, opacity 0.6s ease;
+    position:relative;
+    border: 1px solid rgba(205,160,95,0.25);
+  }
+  .cover.hide{
+    transform: scale(0.85) rotateX(20deg);
+    opacity:0;
+    pointer-events:none;
+    position:absolute;
+  }
+  .cover .seal{
+    width:70px; height:70px;
+    border-radius:50%;
+    background: radial-gradient(circle at 30% 30%, #e98b97, var(--rose-deep));
+    margin: 0 auto 28px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:28px;
+    box-shadow: 0 8px 20px rgba(168,66,79,0.35);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{ transform: scale(1); }
+    50%{ transform: scale(1.06); }
+  }
+  .cover h1{
+    font-family:'Playfair Display', serif;
+    font-size: 28px;
+    font-weight:600;
+    color: var(--rose-deep);
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+  }
+  .cover p{
+    font-size: 14px;
+    color:#9b7d80;
+    line-height:1.6;
+    margin-bottom: 28px;
+  }
+  .cover .btn{
+    display:inline-block;
+    padding: 13px 34px;
+    border-radius: 999px;
+    background: var(--rose-deep);
+    color: var(--cream);
+    font-weight:500;
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    box-shadow: 0 8px 20px rgba(168,66,79,0.3);
+    transition: transform 0.2s ease;
+  }
+  .cover .btn:active{ transform: scale(0.96); }
+  .card{
+    width:100%;
+    max-width: 420px;
+    opacity:0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .card.show{
+    opacity:1;
+    transform: translateY(0);
+  }
+  .panel{
+    background: var(--cream);
+    border-radius: 22px;
+    box-shadow: 0 20px 60px rgba(168,66,79,0.15);
+    overflow:hidden;
+    border: 1px solid rgba(205,160,95,0.2);
+  }
+  .gallery{
+    position:relative;
+    width:100%;
+    aspect-ratio: 4/5;
+    overflow:hidden;
+  }
+  .gallery img{
+    position:absolute;
+    inset:0;
+    width:100%; height:100%;
+    object-fit:cover;
+    opacity:0;
+    transition: opacity 1.2s ease;
+  }
+  .gallery img.active{ opacity:1; }
+  .gallery::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(58,44,46,0.55) 100%);
+  }
+  .gallery-names{
+    position:absolute;
+    bottom: 18px; left: 0; right:0;
+    text-align:center;
+    z-index: 2;
+    color:#fff;
+  }
+  .gallery-names .names{
+    font-family:'Playfair Display', serif;
+    font-size: 26px;
+    font-weight:600;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  }
+  .gallery-names .names span{ color: #ffd9c9; }
+  .dots{
+    position:absolute;
+    top: 16px; left:0; right:0;
+    display:flex;
+    gap:6px;
+    justify-content:center;
+    z-index:2;
+  }
+  .dots span{
+    width: 28px; height:3px;
+    border-radius:3px;
+    background: rgba(255,255,255,0.35);
+    overflow:hidden;
+  }
+  .dots span i{
+    display:block; height:100%; width:0%;
+    background:#fff;
+    transition: width 0.2s linear;
+  }
+  .dots span.done i{ width:100%; transition:none; }
+  .counter{
+    padding: 22px 24px 6px;
+    text-align:center;
+  }
+  .counter .label{
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+    font-weight:600;
+  }
+  .counter .grid{
+    display:flex;
+    justify-content:center;
+    gap: 10px;
+  }
+  .counter .unit{
+    background: linear-gradient(160deg, #fff, #fbe9e4);
+    border: 1px solid rgba(217,107,120,0.18);
+    border-radius: 14px;
+    padding: 12px 8px;
+    min-width: 64px;
+    box-shadow: 0 6px 14px rgba(217,107,120,0.08);
+  }
+  .counter .unit .num{
+    font-family:'Playfair Display', serif;
+    font-size: 24px;
+    font-weight:600;
+    color: var(--rose-deep);
+    line-height:1;
+  }
+  .counter .unit .txt{
+    font-size: 10px;
+    text-transform:uppercase;
+    letter-spacing: 1px;
+    color:#b9999c;
+    margin-top: 4px;
+  }
+  .letter{
+    padding: 28px 28px 10px;
+  }
+  .letter .quote-mark{
+    font-family:'Playfair Display', serif;
+    font-size: 54px;
+    color: var(--rose);
+    line-height: 0.5;
+    opacity: 0.45;
+  }
+  .letter p{
+    font-family:'Playfair Display', serif;
+    font-size: 16px;
+    line-height: 1.85;
+    color: #4a3739;
+    margin-bottom: 16px;
+    text-align: justify;
+  }
+  .letter .signature{
+    text-align:right;
+    font-style: italic;
+    color: var(--rose-deep);
+    font-size: 15px;
+    margin-top: 8px;
+  }
+  .player{
+    margin: 8px 24px 28px;
+    background: linear-gradient(135deg, var(--rose-deep), #c2616e);
+    border-radius: 16px;
+    padding: 16px 18px;
+    display:flex;
+    align-items:center;
+    gap: 14px;
+    color:#fff;
+    box-shadow: 0 10px 24px rgba(168,66,79,0.25);
+  }
+  .player .icon{
+    width:42px; height:42px;
+    border-radius:50%;
+    background: rgba(255,255,255,0.18);
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+    font-size:18px;
+  }
+  .player .info{ flex:1; min-width:0; }
+  .player .info .t1{ font-size:13px; font-weight:600; letter-spacing:0.5px; }
+  .player .info .t2{ font-size:11px; opacity:0.8; margin-top:2px; }
+  .player a{
+    color:#fff;
+    text-decoration:none;
+    background: rgba(255,255,255,0.18);
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight:600;
+    white-space:nowrap;
+  }
+  .footer{
+    text-align:center;
+    padding: 4px 24px 28px;
+    color:#c4a4a6;
+    font-size:11px;
+    letter-spacing: 1px;
+    font-family:'Playfair Display', serif;
+    font-style: italic;
+  }
+  .footer .heart{ color: var(--rose-deep); }
+  @media (max-width: 380px){
+    .counter .unit{ min-width: 54px; padding:10px 6px; }
+    .counter .unit .num{ font-size:20px; }
+    .letter p{ font-size:15px; }
+  }
+</style>
+</head>
+<body>
+<div class="envelope-wrap">
+  <div class="cover" id="cover">
+    <div class="seal">💌</div>
+    <h1>Para Gabriela</h1>
+    <p>Uma cartinha guardada com carinho,<br>esperando o momento certo de ser aberta.</p>
+    <div class="btn" id="openBtn">Abrir cartinha</div>
+  </div>
+  <div class="card" id="card">
+    <div class="panel">
+      <div class="gallery" id="gallery">
+        <div class="dots" id="dots"></div>
+        <img src="https://i.postimg.cc/XBJd7wQG/file-00000000a9b0720e989c3f81406a34db.png" class="active">
+        <img src="https://i.postimg.cc/RJFKVcXN/Screenshot-20260611-095059.jpg">
+        <img src="https://i.postimg.cc/QKt1xp0V/Screenshot-20260611-095106.jpg">
+        <div class="gallery-names">
+          <div class="names">Andrey <span>&</span> Gabriela</div>
+        </div>
+      </div>
+      <div class="counter">
+        <div class="label">Juntos há</div>
+        <div class="grid" id="counterGrid">
+          <div class="unit"><div class="num" id="days">0</div><div class="txt">dias</div></div>
+          <div class="unit"><div class="num" id="hours">0</div><div class="txt">horas</div></div>
+          <div class="unit"><div class="num" id="mins">0</div><div class="txt">min</div></div>
+          <div class="unit"><div class="num" id="secs">0</div><div class="txt">seg</div></div>
+        </div>
+      </div>
+      <div class="letter">
+        <div class="quote-mark">"</div>
+        <p>Eu me apaixonei pela imensidão do seu olhar desde a primeira vez em que me perdi nele. Sou completamente encantada por cada detalhe seu. Seu sorriso ilumina até os meus dias mais cinzentos e me faz acreditar que tudo pode ficar bem.</p>
+        <p>Você é o meu porto seguro, meu lugar de paz em meio ao caos. Ao seu lado encontro conforto, carinho e felicidade. Cada momento com você se torna especial porque é você quem torna tudo mais bonito.</p>
+        <p>Eu te amo mais do que as palavras conseguem expressar.</p>
+        <div class="signature">— com todo o meu amor</div>
+      </div>
+      <div class="player">
+        <div class="icon">🎵</div>
+        <div class="info">
+          <div class="t1">Nossa música</div>
+          <div class="t2">Toque para ouvir no YouTube</div>
+        </div>
+        <a href="https://youtu.be/oejyRpHiP2M?is=6bEkB1vZxTCHAXgT" target="_blank">Ouvir</a>
+      </div>
+      <div class="footer">feito com <span class="heart">♥</span> para você</div>
+    </div>
+  </div>
+</div>
+<script>
+  document.getElementById('openBtn').addEventListener('click', () => {
+    document.getElementById('cover').classList.add('hide');
+    setTimeout(() => {
+      document.getElementById('card').classList.add('show');
+    }, 200);
+  });
+  const startDate = new Date("2023-01-01T00:00:00");
+  function updateCounter(){
+    const now = new Date();
+    let diff = now - startDate;
+    if(diff < 0) diff = 0;
+    const days = Math.floor(diff / (1000*60*60*24));
+    const hours = Math.floor((diff / (1000*60*60)) % 24);
+    const mins = Math.floor((diff / (1000*60)) % 60);
+    const secs = Math.floor((diff / 1000) % 60);
+    document.getElementById('days').textContent = days;
+    document.getElementById('hours').textContent = hours;
+    document.getElementById('mins').textContent = mins;
+    document.getElementById('secs').textContent = secs;
+  }
+  updateCounter();
+  setInterval(updateCounter, 1000);
+  const images = document.querySelectorAll('#gallery img');
+  const dotsContainer = document.getElementById('dots');
+  const slideDuration = 4000;
+  let current = 0;
+  images.forEach(() => {
+    const dot = document.createElement('span');
+    dot.innerHTML = '<i></i>';
+    dotsContainer.appendChild(dot);
+  });
+  const dots = dotsContainer.querySelectorAll('span');
+  function goToSlide(index){
+    images[current].classList.remove('active');
+    dots[current].classList.remove('done');
+    dots[current].querySelector('i').style.transition = 'none';
+    dots[current].querySelector('i').style.width = '0%';
+    current = index;
+    images[current].classList.add('active');
+    runDot();
+  }
+  function runDot(){
+    const bar = dots[current].querySelector('i');
+    bar.style.transition = 'none';
+    bar.style.width = '0%';
+    requestAnimationFrame(() => {
+      bar.style.transition = `width ${slideDuration}ms linear`;
+      bar.style.width = '100%';
+    });
+  }
+  dots[0].querySelector('i').style.transition = 'none';
+  runDot();
+  setInterval(() => {
+    const next = (current + 1) % images.length;
+    goToSlide(next);
+  }, slideDuration);
+</script>
+</body>
+</html>
